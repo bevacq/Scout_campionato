@@ -58,4 +58,64 @@
 
     <script src="script.js"></script>
 </body>
+<!-- Firebase App (la libreria base) -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<!-- Firebase Authentication -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+<!-- Firebase Firestore -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+
+<script>
+  // Configurazione Firebase
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  // Inizializza Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // Funzione di login
+  function login(email, password) {
+    auth.signInWithEmailAndPassword(email, password)
+      .then(userCredential => {
+        // Login avvenuto con successo
+        console.log('Utente loggato:', userCredential.user);
+      })
+      .catch(error => {
+        console.error('Errore di login:', error.message);
+      });
+  }
+
+  // Funzione per controllare l'accesso
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      // Utente autenticato
+      document.getElementById('admin-section').style.display = 'block';
+    } else {
+      // Utente non autenticato
+      document.getElementById('admin-section').style.display = 'none';
+    }
+  });
+
+  // Funzione per aggiornare un risultato
+  function aggiornaEsitoFirebase(index, esito) {
+    const incontro = incontri[index];
+    db.collection('incontri').doc(`${incontro.casa}-${incontro.ospite}`).set({
+      casa: incontro.casa,
+      ospite: incontro.ospite,
+      esito: esito
+    }).then(() => {
+      console.log('Esito aggiornato con successo.');
+    }).catch(error => {
+      console.error('Errore di aggiornamento:', error.message);
+    });
+  }
+</script>
 </html>
