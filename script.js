@@ -128,6 +128,13 @@ function aggiungiPulsanteAnnulla() {
     undoButton.onclick = undoLastAction;
     document.body.insertBefore(undoButton, document.body.firstChild);
 }
+function logout() {
+  auth.signOut().then(() => {
+    console.log('Utente disconnesso.');
+  }).catch(error => {
+    console.error('Errore di logout:', error.message);
+  });
+}
 
 aggiungiPulsanteAnnulla();
 generaIncontri();
