@@ -1,3 +1,6 @@
+// Aggiungi una variabile per identificare se l'utente è amministratore
+let isAdmin = true; // Imposta su true per l'amministratore, su false per altri utenti
+
 const squadre = [
     "aquile",
     "castori",
@@ -18,7 +21,7 @@ let classifica = squadre.map(squadra => ({
 let incontri = [];
 const history = [];
 
-// Genera gli incontri di andata e ritorno
+// Funzione per generare gli incontri
 function generaIncontri() {
     incontri = [];
     for (let i = 0; i < squadre.length; i++) {
@@ -45,6 +48,11 @@ function caricaClassifica() {
 
 // Funzione per aggiornare la classifica
 function aggiornaClassifica(esito, casa, ospite) {
+    if (!isAdmin) {
+        alert("Solo l'amministratore può aggiornare la classifica.");
+        return; // Se l'utente non è amministratore, non permette l'aggiornamento
+    }
+
     const snapshot = JSON.parse(JSON.stringify(classifica)); // Salva lo stato attuale
     history.push(snapshot); // Aggiungi lo stato alla pila
 
@@ -106,13 +114,13 @@ function renderIncontri() {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>
-                <input type="text" value="${incontro.casa}" onchange="modificaIncontro(${index}, 'casa', this.value)" />
+                <input type="text" value="${incontro.casa}" onchange="modificaIncontro(${index}, 'casa', this.value)" ${isAdmin ? '' : 'disabled'} />
             </td>
             <td>
-                <input type="text" value="${incontro.ospite}" onchange="modificaIncontro(${index}, 'ospite', this.value)" />
+                <input type="text" value="${incontro.ospite}" onchange="modificaIncontro(${index}, 'ospite', this.value)" ${isAdmin ? '' : 'disabled'} />
             </td>
             <td>
-                <select onchange="aggiornaEsito(${index}, this.value)">
+                <select onchange="aggiornaEsito(${index}, this.value)" ${isAdmin ? '' : 'disabled'}>
                     <option value="">--Seleziona--</option>
                     <option value="Vittoria Casa" ${incontro.esito === 'Vittoria Casa' ? 'selected' : ''}>Vittoria Casa</option>
                     <option value="Vittoria Ospite" ${incontro.esito === 'Vittoria Ospite' ? 'selected' : ''}>Vittoria Ospite</option>
@@ -126,15 +134,21 @@ function renderIncontri() {
 
 // Funzione per modificare un incontro
 function modificaIncontro(index, campo, valore) {
-    incontri[index][campo] = valore;
-    renderIncontri();
+    if (isAdmin) {
+        incontri[index][campo] = valore;
+        renderIncontri();
+    }
 }
 
 // Funzione per aggiornare l'esito di un incontro
 function aggiornaEsito(index, esito) {
-    incontri[index].esito = esito;
-    const { casa, ospite } = incontri[index];
-    aggiornaClassifica(esito, casa, ospite);
+    if (isAdmin) {
+        incontri[index].esito = esito;
+        const { casa, ospite } = incontri[index];
+        aggiornaClassifica(esito, casa, ospite);
+    } else {
+        alert("Solo l'amministratore può aggiornare l'esito della partita.");
+    }
 }
 
 // Aggiungi un pulsante di annullamento
