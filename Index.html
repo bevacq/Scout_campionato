@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -110,9 +111,6 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Variabile per tenere traccia dello stato di login
-        let isAdmin = false;
-
         // Funzione di login
         function login() {
             const username = document.getElementById('username').value;
@@ -120,12 +118,9 @@
 
             // Verifica delle credenziali
             if (username === "bevacq" && password === "19052005") {
-                isAdmin = true;
                 document.getElementById('login-form').style.display = 'none';
                 document.getElementById('admin-section').style.display = 'block';
                 console.log('Accesso amministratore riuscito.');
-                renderClassifica();
-                renderIncontri();
             } else {
                 alert('Username o password errati!');
             }
@@ -135,111 +130,12 @@
         function logout() {
             document.getElementById('login-form').style.display = 'block';
             document.getElementById('admin-section').style.display = 'none';
-            isAdmin = false;
             console.log('Logout effettuato.');
         }
 
-        const squadre = [
-            "aquile", "castori", "falchi", "koala", "gazzelle", "lupi"
-        ];
-
-        let classifica = squadre.map(squadra => ({
-            nome: squadra,
-            vittorie: 0,
-            sconfitte: 0,
-            pareggi: 0,
-            punti: 0
-        }));
-
-        let incontri = [];
-
-        // Funzione per generare gli incontri
-        function generaIncontri() {
-            incontri = [];
-            for (let i = 0; i < squadre.length; i++) {
-                for (let j = i + 1; j < squadre.length; j++) {
-                    incontri.push({ casa: squadre[i], ospite: squadre[j], esito: "" });
-                    incontri.push({ casa: squadre[j], ospite: squadre[i], esito: "" });
-                }
-            }
-        }
-
-        // Funzione per aggiornare la classifica
-        function aggiornaClassifica(esito, casa, ospite) {
-            if (!isAdmin) {
-                alert("Solo l'amministratore può aggiornare gli esiti.");
-                return;
-            }
-
-            const squadraCasa = classifica.find(s => s.nome === casa);
-            const squadraOspite = classifica.find(s => s.nome === ospite);
-
-            if (esito === "Vittoria Casa") {
-                squadraCasa.vittorie++;
-                squadraCasa.punti += 3;
-                squadraOspite.sconfitte++;
-            } else if (esito === "Vittoria Ospite") {
-                squadraOspite.vittorie++;
-                squadraOspite.punti += 3;
-                squadraCasa.sconfitte++;
-            } else if (esito === "Pareggio") {
-                squadraCasa.pareggi++;
-                squadraOspite.pareggi++;
-                squadraCasa.punti++;
-                squadraOspite.punti++;
-            }
-
-            renderClassifica();
-        }
-
-        // Funzione per renderizzare la classifica
-        function renderClassifica() {
-            const tbody = document.getElementById("classifica").querySelector("tbody");
-            tbody.innerHTML = "";
-            classifica.sort((a, b) => b.punti - a.punti);
-            classifica.forEach(s => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${s.nome}</td>
-                    <td>${s.vittorie}</td>
-                    <td>${s.sconfitte}</td>
-                    <td>${s.pareggi}</td>
-                    <td>${s.punti}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Funzione per renderizzare gli incontri
-        function renderIncontri() {
-            const tbody = document.getElementById("incontri").querySelector("tbody");
-            tbody.innerHTML = "";
-            incontri.forEach((incontro, index) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${incontro.casa}</td>
-                    <td>${incontro.ospite}</td>
-                    <td>
-                        <select onchange="aggiornaEsito(${index}, this.value)" ${isAdmin ? '' : 'disabled'}>
-                            <option value="">--Seleziona--</option>
-                            <option value="Vittoria Casa" ${incontro.esito === 'Vittoria Casa' ? 'selected' : ''}>Vittoria Casa</option>
-                            <option value="Vittoria Ospite" ${incontro.esito === 'Vittoria Ospite' ? 'selected' : ''}>Vittoria Ospite</option>
-                            <option value="Pareggio" ${incontro.esito === 'Pareggio' ? 'selected' : ''}>Pareggio</option>
-                        </select>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Funzione per aggiornare l'esito di un incontro
-        function aggiornaEsito(index, esito) {
-            const { casa, ospite } = incontri[index];
-            aggiornaClassifica(esito, casa, ospite);
-        }
-
-        // Inizializza gli incontri
-        generaIncontri();
+        // Puoi aggiungere ulteriori funzioni qui per gestire gli incontri e la classifica
     </script>
+
+    <script src="script.js"></script>
 </body>
 </html>
