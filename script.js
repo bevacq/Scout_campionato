@@ -29,6 +29,20 @@ function generaIncontri() {
     }
 }
 
+// Funzione per salvare la classifica nel LocalStorage
+function salvaClassifica() {
+    localStorage.setItem('classifica', JSON.stringify(classifica));
+}
+
+// Funzione per caricare la classifica dal LocalStorage
+function caricaClassifica() {
+    const data = localStorage.getItem('classifica');
+    if (data) {
+        classifica = JSON.parse(data);
+    }
+    renderClassifica();
+}
+
 // Funzione per aggiornare la classifica
 function aggiornaClassifica(esito, casa, ospite) {
     const snapshot = JSON.parse(JSON.stringify(classifica)); // Salva lo stato attuale
@@ -51,6 +65,7 @@ function aggiornaClassifica(esito, casa, ospite) {
         squadraCasa.punti++;
         squadraOspite.punti++;
     }
+    salvaClassifica(); // Salva dopo ogni aggiornamento
     renderClassifica();
 }
 
@@ -58,6 +73,7 @@ function aggiornaClassifica(esito, casa, ospite) {
 function undoLastAction() {
     if (history.length > 0) {
         classifica = history.pop(); // Ripristina lo stato precedente
+        salvaClassifica(); // Salva dopo l'undo
         renderClassifica();
     } else {
         alert("Non ci sono operazioni da annullare.");
@@ -128,15 +144,8 @@ function aggiungiPulsanteAnnulla() {
     undoButton.onclick = undoLastAction;
     document.body.insertBefore(undoButton, document.body.firstChild);
 }
-function logout() {
-  auth.signOut().then(() => {
-    console.log('Utente disconnesso.');
-  }).catch(error => {
-    console.error('Errore di logout:', error.message);
-  });
-}
 
 aggiungiPulsanteAnnulla();
 generaIncontri();
-renderClassifica();
+caricaClassifica();
 renderIncontri();
