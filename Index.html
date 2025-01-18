@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campionato di Calcio</title>
+    <link rel="stylesheet" href="design.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tabella Classifica</h1>
+    <table id="classifica">
+        <thead>
+            <tr>
+                <th>Squadra</th>
+                <th>Vittorie</th>
+                <th>Sconfitte</th>
+                <th>Pareggi</th>
+                <th>Punti</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Le squadre saranno aggiunte qui dinamicamente -->
+        </tbody>
+    </table>
+
+    <h1>Incontri</h1>
+    <table id="incontri">
+        <thead>
+            <tr>
+                <th>Squadra Casa</th>
+                <th>Squadra Ospite</th>
+                <th>Esito</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Gli incontri saranno aggiunti qui dinamicamente -->
+        </tbody>
+    </table>
+
+    <script src="script.js"></script>
+</body>
+</html>
