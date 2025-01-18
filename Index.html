@@ -14,97 +14,6 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-<body>
-    <h1>Tabella Classifica</h1>
-    <!-- Inserire il form di login -->
-    <div id="login-form">
-        <h2>Login Amministratore</h2>
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Login</button>
-    </div>
-
-    <h1>Tabella Classifica</h1>
-    <!-- La tabella classifica rimane invariata -->
-    <table id="classifica">
-        <thead>
-            <tr>
-                <th>Squadra</th>
-                <th>Vittorie</th>
-                <th>Sconfitte</th>
-                <th>Pareggi</th>
-                <th>Punti</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Le squadre saranno aggiunte qui dinamicamente -->
-        </tbody>
-    </table>
-
-    <h1>Incontri</h1>
-    <table id="incontri">
-        <thead>
-            <tr>
-                <th>Squadra Casa</th>
-                <th>Squadra Ospite</th>
-                <th>Esito</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Gli incontri saranno aggiunti qui dinamicamente -->
-        </tbody>
-    </table>
-
-    <div id="admin-section" style="display: none;">
-        <!-- Interfaccia per l'aggiornamento dei risultati -->
-        <button onclick="logout()">Logout</button>
-    </div>
-
-    <!-- Inclusione degli script rimane invariata -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
-    <script>
-        // Configurazione Firebase e logica rimane invariata
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // Modifica della funzione di login per ottenere i dati dal form
-        function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            auth.signInWithEmailAndPassword(email, password)
-                .then(userCredential => {
-                    console.log('Utente loggato:', userCredential.user);
-                    document.getElementById('login-form').style.display = 'none'; // Nasconde il form dopo il login
-                })
-                .catch(error => {
-                    console.error('Errore di login:', error.message);
-                });
-        }
-
-        function logout() {
-            auth.signOut().then(() => {
-                console.log('Logout effettuato.');
-                document.getElementById('login-form').style.display = 'block'; // Mostra di nuovo il form di login
-            }).catch(error => {
-                console.error('Errore di logout:', error.message);
-            });
-        }
-    </script>
-    <script src="script.js"></script>
-</body>
         }
         th, td {
             border: 1px solid #ccc;
@@ -114,10 +23,37 @@
         th {
             background-color: #f4f4f4;
         }
+        #login-form {
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 10px;
+            margin: 5px;
+            width: 200px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <h1>Tabella Classifica</h1>
+    <!-- Form di login -->
+    <div id="login-form">
+        <h2>Login Amministratore</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <!-- Tabella Classifica -->
     <table id="classifica">
         <thead>
             <tr>
@@ -133,6 +69,7 @@
         </tbody>
     </table>
 
+    <!-- Tabella Incontri -->
     <h1>Incontri</h1>
     <table id="incontri">
         <thead>
@@ -147,16 +84,14 @@
         </tbody>
     </table>
 
+    <!-- Sezione Amministratore (nascosta inizialmente) -->
     <div id="admin-section" style="display: none;">
-        <!-- Interfaccia per l'aggiornamento dei risultati -->
         <button onclick="logout()">Logout</button>
     </div>
 
-    <!-- Firebase App (la libreria base) -->
+    <!-- Inclusione degli script Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <!-- Firebase Authentication -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
-    <!-- Firebase Firestore -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
 
     <script>
@@ -176,61 +111,28 @@
         const db = firebase.firestore();
 
         // Funzione di login
-        function login(email, password) {
-            auth.signInWithEmailAndPassword(email, password)
-                .then(userCredential => {
-                    console.log('Utente loggato:', userCredential.user);
-                })
-                .catch(error => {
-                    console.error('Errore di login:', error.message);
-                });
-        }
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
-        // Funzione per controllare l'accesso
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                // Ottieni l'ID dell'utente
-                const uid = user.uid;
-
-                // Controlla il ruolo dell'utente in Firestore
-                db.collection('users').doc(uid).get().then(doc => {
-                    if (doc.exists && doc.data().isAdmin) {
-                        document.getElementById('admin-section').style.display = 'block';
-                        console.log('Benvenuto, amministratore!');
-                    } else {
-                        console.log('Accesso utente standard.');
-                    }
-                }).catch(error => {
-                    console.error('Errore nel recupero dei dati utente:', error);
-                });
+            // Verifica delle credenziali
+            if (username === "bevacq" && password === "19052005") {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('admin-section').style.display = 'block';
+                console.log('Accesso amministratore riuscito.');
             } else {
-                document.getElementById('admin-section').style.display = 'none';
-                console.log('Utente non autenticato.');
+                alert('Username o password errati!');
             }
-        });
-
-        // Funzione per aggiornare un risultato
-        function aggiornaEsitoFirebase(index, esito) {
-            const incontro = incontri[index];
-            db.collection('incontri').doc(`${incontro.casa}-${incontro.ospite}`).set({
-                casa: incontro.casa,
-                ospite: incontro.ospite,
-                esito: esito
-            }).then(() => {
-                console.log('Esito aggiornato con successo.');
-            }).catch(error => {
-                console.error('Errore di aggiornamento:', error.message);
-            });
         }
 
         // Funzione di logout
         function logout() {
-            auth.signOut().then(() => {
-                console.log('Logout effettuato.');
-            }).catch(error => {
-                console.error('Errore di logout:', error.message);
-            });
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('admin-section').style.display = 'none';
+            console.log('Logout effettuato.');
         }
+
+        // Puoi aggiungere ulteriori funzioni qui per gestire gli incontri e la classifica
     </script>
 
     <script src="script.js"></script>
