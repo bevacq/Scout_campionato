@@ -1,10 +1,10 @@
 const squadre = [
-    "Squadra 1",
-    "Squadra 2",
-    "Squadra 3",
-    "Squadra 4",
-    "Squadra 5",
-    "Squadra 6"
+    "aquile",
+    "castori",
+    "falchi",
+    "koala",
+    "gazzelle",
+    "lupi"
 ];
 
 let classifica = squadre.map(squadra => ({
